@@ -1,8 +1,9 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   # https://devenv.sh/basics/
-  packages = [ pkgs.git ];
+  packages = [
+    pkgs.git
+    pkgs.graphviz
+  ];
 
   languages.nix.enable = true;
   languages.haskell.enable = true;
