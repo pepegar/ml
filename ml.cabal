@@ -55,12 +55,18 @@ common warnings
     ghc-options: -Wall
 
 library
-  exposed-modules: ML
+  exposed-modules: ML,
+                   ML.Graph
+
   build-depends:   base ^>=4.17.2.1,
                    lens,
                    recursion-schemes,
+                   monadic-recursion-schemes,
                    graphviz,
-                   fgl
+                   fgl,
+                   mtl,
+                   free,
+                   deriving-compat
   hs-source-dirs: lib/
   default-language: GHC2021
 
