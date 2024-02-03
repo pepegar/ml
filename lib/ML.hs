@@ -4,6 +4,7 @@
 module ML where
 
 import Control.Lens.TH (makeLenses)
+import Data.Deriving
 import Data.Functor.Foldable (Recursive (cata))
 import Data.Functor.Foldable.TH (makeBaseFunctor)
 
@@ -33,6 +34,10 @@ data Value
 
 $(makeLenses ''Value)
 makeBaseFunctor ''Value
+
+deriveEq1 ''ValueF
+deriveOrd1 ''ValueF
+deriveShow1 ''ValueF
 
 eval :: Value -> Float
 eval = cata go
