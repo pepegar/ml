@@ -54,6 +54,16 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
+library
+  exposed-modules: ML
+  build-depends:   base ^>=4.17.2.1,
+                   lens,
+                   recursion-schemes,
+                   graphviz,
+                   fgl
+  hs-source-dirs: lib/
+  default-language: GHC2021
+
 executable ml
     -- Import common warning flags.
     import:           warnings
@@ -69,10 +79,7 @@ executable ml
 
     -- Other library packages from which modules are imported.
     build-depends:   base ^>=4.17.2.1,
-                     lens,
-                     recursion-schemes,
-                     graphviz,
-                     fgl
+                     ml
 
     -- Directories containing source files.
     hs-source-dirs:   app
