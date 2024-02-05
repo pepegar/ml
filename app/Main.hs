@@ -1,7 +1,7 @@
 module Main where
 
-import ML (Value)
-import ML.Graph (annotateWithId, toGraph)
+import ML (Value, eval)
+import ML.Graph (annotateWithId, toString)
 
 main :: IO ()
 main = print result
@@ -9,4 +9,4 @@ main = print result
     expr :: Value
     expr = 5.5 * 4.4 - 2 ** 33
 
-    result = annotateWithId expr
+    result = toString expr

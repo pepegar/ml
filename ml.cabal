@@ -66,6 +66,8 @@ library
                    fgl,
                    mtl,
                    free,
+                   comonad,
+                   containers,
                    deriving-compat
   hs-source-dirs: lib/
   default-language: GHC2021

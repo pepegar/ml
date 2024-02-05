@@ -3,7 +3,7 @@
 
 module ML where
 
-import Control.Lens.TH (makeLenses)
+import Control.Lens.TH (makePrisms)
 import Data.Deriving
 import Data.Functor.Foldable (Recursive (cata))
 import Data.Functor.Foldable.TH (makeBaseFunctor)
@@ -32,7 +32,7 @@ data Value
   | Atanh {_val :: Value}
   deriving (Show, Eq)
 
-$(makeLenses ''Value)
+$(makePrisms ''Value)
 makeBaseFunctor ''Value
 
 deriveEq1 ''ValueF
