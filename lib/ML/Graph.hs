@@ -1,7 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module ML.Graph where
 
 import Control.Comonad (Comonad (extract))
 import Control.Comonad.Cofree (Cofree ((:<)), ComonadCofree (unwrap))
+import Control.Lens (makeLenses)
 import Control.Monad.State.Lazy
 import Data.Functor ((<&>))
 import Data.Functor.Foldable (Base, Corecursive (embed), Recursive (cata, para), hylo)
@@ -36,28 +39,37 @@ toTree = cata go
     go (ML.AcoshF x) = Node {rootLabel = "Acosh", subForest = [x]}
     go (ML.AtanhF x) = Node {rootLabel = "Atanh", subForest = [x]}
 
-forwardPass :: ML.Value -> Tree String
+data Op = Op
+  { _op :: String,
+    _value :: Float,
+    _grad :: Float
+  }
+  deriving (Show, Eq)
+
+makeLenses ''Op
+
+forwardPass :: ML.Value -> Tree Op
 forwardPass = para go
   where
-    go :: ML.ValueF (ML.Value, Tree String) -> Tree String
-    go (ML.ValueF x) = Node {rootLabel = show x, subForest = []}
-    go (ML.AddF (valL, l) (valR, r)) = Node {rootLabel = "Add " ++ show (ML.eval valL + ML.eval valR), subForest = [l, r]}
-    go (ML.SubF (valL, l) (valR, r)) = Node {rootLabel = "Sub " ++ show (ML.eval valL - ML.eval valR), subForest = [l, r]}
-    go (ML.MulF (valL, l) (valR, r)) = Node {rootLabel = "Mul " ++ show (ML.eval valL * ML.eval valR), subForest = [l, r]}
-    go (ML.DivF (valL, l) (valR, r)) = Node {rootLabel = "Div " ++ show (ML.eval valL / ML.eval valR), subForest = [l, r]}
-    go (ML.AbsF (val, x)) = Node {rootLabel = "Abs " ++ show (abs $ ML.eval val), subForest = [x]}
-    go (ML.NegF (val, x)) = Node {rootLabel = "Neg " ++ show (negate $ ML.eval val), subForest = [x]}
-    go (ML.ExpF (val, x)) = Node {rootLabel = "Exp " ++ show (exp $ ML.eval val), subForest = [x]}
-    go (ML.SignumF (val, x)) = Node {rootLabel = "Signum " ++ show (signum $ ML.eval val), subForest = [x]}
-    go (ML.ReluF (val, x)) = Node {rootLabel = "Relu " ++ show (ML.eval val), subForest = [x]}
-    go (ML.LogF (val, x)) = Node {rootLabel = "Log " ++ show (log $ ML.eval val), subForest = [x]}
-    go (ML.SinF (val, x)) = Node {rootLabel = "Sin " ++ show (sin $ ML.eval val), subForest = [x]}
-    go (ML.CosF (val, x)) = Node {rootLabel = "Cos " ++ show (cos $ ML.eval val), subForest = [x]}
-    go (ML.AsinF (val, x)) = Node {rootLabel = "Asin " ++ show (asin $ ML.eval val), subForest = [x]}
-    go (ML.AcosF (val, x)) = Node {rootLabel = "Acos " ++ show (acos $ ML.eval val), subForest = [x]}
-    go (ML.AtanF (val, x)) = Node {rootLabel = "Atan " ++ show (atan $ ML.eval val), subForest = [x]}
-    go (ML.SinhF (val, x)) = Node {rootLabel = "Sinh " ++ show (sinh $ ML.eval val), subForest = [x]}
-    go (ML.CoshF (val, x)) = Node {rootLabel = "Cosh " ++ show (cosh $ ML.eval val), subForest = [x]}
-    go (ML.AsinhF (val, x)) = Node {rootLabel = "Asinh " ++ show (asinh $ ML.eval val), subForest = [x]}
-    go (ML.AcoshF (val, x)) = Node {rootLabel = "Acosh " ++ show (acosh $ ML.eval val), subForest = [x]}
-    go (ML.AtanhF (val, x)) = Node {rootLabel = "Atanh " ++ show (atanh $ ML.eval val), subForest = [x]}
+    go :: ML.ValueF (ML.Value, Tree Op) -> Tree Op
+    go (ML.ValueF x) = Node {rootLabel = Op "Value" x 0, subForest = []}
+    go (ML.AddF (valL, l) (valR, r)) = Node {rootLabel = Op "Add" (ML.eval valL + ML.eval valR) 0, subForest = [l, r]}
+    go (ML.SubF (valL, l) (valR, r)) = Node {rootLabel = Op "Sub" (ML.eval valL - ML.eval valR) 0, subForest = [l, r]}
+    go (ML.MulF (valL, l) (valR, r)) = Node {rootLabel = Op "Mul" (ML.eval valL * ML.eval valR) 0, subForest = [l, r]}
+    go (ML.DivF (valL, l) (valR, r)) = Node {rootLabel = Op "Div" (ML.eval valL / ML.eval valR) 0, subForest = [l, r]}
+    go (ML.AbsF (val, x)) = Node {rootLabel = Op "Abs" (abs $ ML.eval val) 0, subForest = [x]}
+    go (ML.NegF (val, x)) = Node {rootLabel = Op "Neg" (negate $ ML.eval val) 0, subForest = [x]}
+    go (ML.ExpF (val, x)) = Node {rootLabel = Op "Exp" (exp $ ML.eval val) 0, subForest = [x]}
+    go (ML.SignumF (val, x)) = Node {rootLabel = Op "Signum" (signum $ ML.eval val) 0, subForest = [x]}
+    go (ML.ReluF (val, x)) = Node {rootLabel = Op "Relu" (ML.eval val) 0, subForest = [x]}
+    go (ML.LogF (val, x)) = Node {rootLabel = Op "Log" (log $ ML.eval val) 0, subForest = [x]}
+    go (ML.SinF (val, x)) = Node {rootLabel = Op "Sin" (sin $ ML.eval val) 0, subForest = [x]}
+    go (ML.CosF (val, x)) = Node {rootLabel = Op "Cos" (cos $ ML.eval val) 0, subForest = [x]}
+    go (ML.AsinF (val, x)) = Node {rootLabel = Op "Asin" (asin $ ML.eval val) 0, subForest = [x]}
+    go (ML.AcosF (val, x)) = Node {rootLabel = Op "Acos" (acos $ ML.eval val) 0, subForest = [x]}
+    go (ML.AtanF (val, x)) = Node {rootLabel = Op "Atan" (atan $ ML.eval val) 0, subForest = [x]}
+    go (ML.SinhF (val, x)) = Node {rootLabel = Op "Sinh" (sinh $ ML.eval val) 0, subForest = [x]}
+    go (ML.CoshF (val, x)) = Node {rootLabel = Op "Cosh" (cosh $ ML.eval val) 0, subForest = [x]}
+    go (ML.AsinhF (val, x)) = Node {rootLabel = Op "Asinh" (asinh $ ML.eval val) 0, subForest = [x]}
+    go (ML.AcoshF (val, x)) = Node {rootLabel = Op "Acosh" (acosh $ ML.eval val) 0, subForest = [x]}
+    go (ML.AtanhF (val, x)) = Node {rootLabel = Op "Atanh" (atanh $ ML.eval val) 0, subForest = [x]}

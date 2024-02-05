@@ -8,6 +8,6 @@ main :: IO ()
 main = putStrLn result
   where
     expr :: Value
-    expr = 4 * 2 - 44 * 323.2 + 2
+    expr = 4 * 2 - 44 * 323.2 + 2 * 4 * 2 - 44
 
-    result = drawTree $ forwardPass expr
+    result = drawTree $ fmap show $ forwardPass expr
