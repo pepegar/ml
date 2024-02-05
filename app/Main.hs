@@ -1,12 +1,13 @@
 module Main where
 
-import ML (Value, eval)
-import ML.Graph (annotateWithId, toString)
+import Data.Tree (drawTree)
+import ML
+import ML.Graph (toTree)
 
 main :: IO ()
-main = print result
+main = putStrLn result
   where
     expr :: Value
-    expr = 5.5 * 4.4 - 2 ** 33
+    expr = 4 * 2 - 44 * 323.2 + 2
 
-    result = toString expr
+    result = drawTree $ toTree expr
