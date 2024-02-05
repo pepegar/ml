@@ -2,7 +2,7 @@ module Main where
 
 import Data.Tree (drawTree)
 import ML
-import ML.Graph (toTree)
+import ML.Graph (forwardPass)
 
 main :: IO ()
 main = putStrLn result
@@ -10,4 +10,4 @@ main = putStrLn result
     expr :: Value
     expr = 4 * 2 - 44 * 323.2 + 2
 
-    result = drawTree $ toTree expr
+    result = drawTree $ forwardPass expr
