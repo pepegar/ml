@@ -49,7 +49,7 @@ forwardPass = para go
     go (ML.NegF (val, x)) = Node {rootLabel = "Neg " ++ show (negate $ ML.eval val), subForest = [x]}
     go (ML.ExpF (val, x)) = Node {rootLabel = "Exp " ++ show (exp $ ML.eval val), subForest = [x]}
     go (ML.SignumF (val, x)) = Node {rootLabel = "Signum " ++ show (signum $ ML.eval val), subForest = [x]}
-    go (ML.ReluF (val, x)) = Node {rootLabel = "Relu " ++ show (max 0 $ ML.eval val), subForest = [x]}
+    go (ML.ReluF (val, x)) = Node {rootLabel = "Relu " ++ show (ML.eval val), subForest = [x]}
     go (ML.LogF (val, x)) = Node {rootLabel = "Log " ++ show (log $ ML.eval val), subForest = [x]}
     go (ML.SinF (val, x)) = Node {rootLabel = "Sin " ++ show (sin $ ML.eval val), subForest = [x]}
     go (ML.CosF (val, x)) = Node {rootLabel = "Cos " ++ show (cos $ ML.eval val), subForest = [x]}
