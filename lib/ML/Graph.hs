@@ -25,7 +25,6 @@ toTree = cata go
     go (ML.NegF x _ _) = Node {rootLabel = "Neg", subForest = [x]}
     go (ML.ExpF x _ _) = Node {rootLabel = "Exp", subForest = [x]}
     go (ML.SignumF x _ _) = Node {rootLabel = "Signum", subForest = [x]}
-    go (ML.ReluF x _ _) = Node {rootLabel = "Relu", subForest = [x]}
     go (ML.LogF x _ _) = Node {rootLabel = "Log", subForest = [x]}
     go (ML.SinF x _ _) = Node {rootLabel = "Sin", subForest = [x]}
     go (ML.CosF x _ _) = Node {rootLabel = "Cos", subForest = [x]}
@@ -60,7 +59,6 @@ toOp = cata go
     go (ML.NegF x grad value) = Node {rootLabel = Op "Neg" value grad, subForest = [x]}
     go (ML.ExpF x grad value) = Node {rootLabel = Op "Exp" value grad, subForest = [x]}
     go (ML.SignumF x grad value) = Node {rootLabel = Op "Signum" value grad, subForest = [x]}
-    go (ML.ReluF x grad value) = Node {rootLabel = Op "Relu" value grad, subForest = [x]}
     go (ML.LogF x grad value) = Node {rootLabel = Op "Log" value grad, subForest = [x]}
     go (ML.SinF x grad value) = Node {rootLabel = Op "Sin" value grad, subForest = [x]}
     go (ML.CosF x grad value) = Node {rootLabel = Op "Cos" value grad, subForest = [x]}

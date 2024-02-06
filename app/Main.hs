@@ -2,6 +2,7 @@ module Main where
 
 import Data.Tree (drawTree)
 import ML qualified
+import ML.Backprop (calculateGradients)
 import ML.Graph (toOp, toTree)
 
 main :: IO ()
@@ -21,6 +22,6 @@ main = do
     b = ML.Value 6.88137 "b" 0
 
     expr :: ML.Value
-    expr = tanh (x1 * w1 + x2 * w2 + b)
+    expr = calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> toOp expr)

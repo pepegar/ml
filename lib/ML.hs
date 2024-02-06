@@ -18,7 +18,6 @@ data Value
   | Neg {_input :: Value, _grad :: Float, _value :: Float}
   | Exp {_input :: Value, _grad :: Float, _value :: Float}
   | Signum {_input :: Value, _grad :: Float, _value :: Float}
-  | Relu {_input :: Value, _grad :: Float, _value :: Float}
   | Log {_input :: Value, _grad :: Float, _value :: Float}
   | Sin {_input :: Value, _grad :: Float, _value :: Float}
   | Cos {_input :: Value, _grad :: Float, _value :: Float}
@@ -53,7 +52,6 @@ eval = cata go
     go (NegF x _ _) = negate x
     go (ExpF x _ _) = exp x
     go (SignumF x _ _) = signum x
-    go (ReluF x _ _) = max 0 x
     go (LogF x _ _) = log x
     go (SinF x _ _) = sin x
     go (CosF x _ _) = cos x
@@ -79,7 +77,6 @@ forwardPass = cata go
     go (NegF x grad value) = Neg x grad $ eval (negate x)
     go (ExpF x grad value) = Exp x grad $ eval (exp x)
     go (SignumF x grad value) = Signum x grad $ eval (signum x)
-    go (ReluF x grad value) = Relu x grad $ max 0 (eval x)
     go (LogF x grad value) = Log x grad $ eval (log x)
     go (SinF x grad value) = Sin x grad $ eval (sin x)
     go (CosF x grad value) = Cos x grad $ eval (cos x)
