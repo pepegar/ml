@@ -3,13 +3,13 @@
 
 module ML where
 
-import Control.Lens.TH (makePrisms)
+import Control.Lens.TH (makeLenses, makePrisms)
 import Data.Deriving
 import Data.Functor.Foldable (Recursive (cata))
 import Data.Functor.Foldable.TH (makeBaseFunctor)
 
 data Value
-  = Value {_value :: Float}
+  = Value {_value :: Float, _name :: String}
   | Add {_l :: Value, _r :: Value}
   | Sub {_l :: Value, _r :: Value}
   | Mul {_l :: Value, _r :: Value}
@@ -33,6 +33,7 @@ data Value
   deriving (Show, Eq)
 
 $(makePrisms ''Value)
+$(makeLenses ''Value)
 makeBaseFunctor ''Value
 
 deriveEq1 ''ValueF
@@ -43,7 +44,7 @@ eval :: Value -> Float
 eval = cata go
   where
     go :: ValueF Float -> Float
-    go (ValueF x) = x
+    go (ValueF x _) = x
     go (AddF x y) = x + y
     go (SubF x y) = x - y
     go (MulF x y) = x * y
@@ -72,16 +73,16 @@ instance Num Value where
   abs = Abs
   signum = Signum
   negate = Neg
-  fromInteger x = Value $ fromInteger x
+  fromInteger x = Value (fromInteger x) "fromInteger"
 
 instance Fractional Value where
   fromRational :: Rational -> Value
-  fromRational = Value . fromRational
+  fromRational = flip Value "fromRational" . fromRational
   (/) :: Value -> Value -> Value
   (/) = Div
 
 instance Floating Value where
-  pi = Value pi
+  pi = Value pi "pi"
   exp = Exp
   log = Log
   sin = Sin

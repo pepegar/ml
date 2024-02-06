@@ -17,7 +17,7 @@ toTree :: ML.Value -> Tree String
 toTree = cata go
   where
     go :: ML.ValueF (Tree String) -> Tree String
-    go (ML.ValueF x) = Node {rootLabel = show x, subForest = []}
+    go (ML.ValueF x name) = Node {rootLabel = name ++ " " ++ show x, subForest = []}
     go (ML.AddF x y) = Node {rootLabel = "Add", subForest = [x, y]}
     go (ML.SubF x y) = Node {rootLabel = "Sub", subForest = [x, y]}
     go (ML.MulF x y) = Node {rootLabel = "Mul", subForest = [x, y]}
@@ -52,7 +52,7 @@ forwardPass :: ML.Value -> Tree Op
 forwardPass = para go
   where
     go :: ML.ValueF (ML.Value, Tree Op) -> Tree Op
-    go (ML.ValueF x) = Node {rootLabel = Op "Value" x 0, subForest = []}
+    go (ML.ValueF x name) = Node {rootLabel = Op name x 0, subForest = []}
     go (ML.AddF (valL, l) (valR, r)) = Node {rootLabel = Op "Add" (ML.eval valL + ML.eval valR) 0, subForest = [l, r]}
     go (ML.SubF (valL, l) (valR, r)) = Node {rootLabel = Op "Sub" (ML.eval valL - ML.eval valR) 0, subForest = [l, r]}
     go (ML.MulF (valL, l) (valR, r)) = Node {rootLabel = Op "Mul" (ML.eval valL * ML.eval valR) 0, subForest = [l, r]}
