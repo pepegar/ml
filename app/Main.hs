@@ -10,15 +10,15 @@ main = putStrLn result
     x1 :: Value
     x1 = Value 2 "x1"
     w1 :: Value
-    w1 = Value 0 "w1"
+    w1 = Value (-3) "w1"
     x2 :: Value
-    x2 = Value (-3.0) "x2"
+    x2 = Value 0 "x2"
     w2 :: Value
-    w2 = Value 1 "w2"
+    w2 = Value 0 "w2"
     b :: Value
-    b = Value 6.7 "b"
+    b = Value 6.88137 "b"
 
     expr :: Value
-    expr = x1 * w1 + x2 * w2 + b
+    expr = tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> forwardPass expr)
