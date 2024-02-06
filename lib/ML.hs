@@ -14,23 +14,23 @@ data Value
   | Sub {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
   | Mul {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
   | Div {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
-  | Abs {_val :: Value, _grad :: Float, _value :: Float}
-  | Neg {_val :: Value, _grad :: Float, _value :: Float}
-  | Exp {_val :: Value, _grad :: Float, _value :: Float}
-  | Signum {_val :: Value, _grad :: Float, _value :: Float}
-  | Relu {_val :: Value, _grad :: Float, _value :: Float}
-  | Log {_val :: Value, _grad :: Float, _value :: Float}
-  | Sin {_val :: Value, _grad :: Float, _value :: Float}
-  | Cos {_val :: Value, _grad :: Float, _value :: Float}
-  | Asin {_val :: Value, _grad :: Float, _value :: Float}
-  | Acos {_val :: Value, _grad :: Float, _value :: Float}
-  | Atan {_val :: Value, _grad :: Float, _value :: Float}
-  | Sinh {_val :: Value, _grad :: Float, _value :: Float}
-  | Cosh {_val :: Value, _grad :: Float, _value :: Float}
-  | Asinh {_val :: Value, _grad :: Float, _value :: Float}
-  | Acosh {_val :: Value, _grad :: Float, _value :: Float}
-  | Atanh {_val :: Value, _grad :: Float, _value :: Float}
-  deriving (Show, Eq)
+  | Abs {_input :: Value, _grad :: Float, _value :: Float}
+  | Neg {_input :: Value, _grad :: Float, _value :: Float}
+  | Exp {_input :: Value, _grad :: Float, _value :: Float}
+  | Signum {_input :: Value, _grad :: Float, _value :: Float}
+  | Relu {_input :: Value, _grad :: Float, _value :: Float}
+  | Log {_input :: Value, _grad :: Float, _value :: Float}
+  | Sin {_input :: Value, _grad :: Float, _value :: Float}
+  | Cos {_input :: Value, _grad :: Float, _value :: Float}
+  | Asin {_input :: Value, _grad :: Float, _value :: Float}
+  | Acos {_input :: Value, _grad :: Float, _value :: Float}
+  | Atan {_input :: Value, _grad :: Float, _value :: Float}
+  | Sinh {_input :: Value, _grad :: Float, _value :: Float}
+  | Cosh {_input :: Value, _grad :: Float, _value :: Float}
+  | Asinh {_input :: Value, _grad :: Float, _value :: Float}
+  | Acosh {_input :: Value, _grad :: Float, _value :: Float}
+  | Atanh {_input :: Value, _grad :: Float, _value :: Float}
+  deriving (Eq)
 
 $(makePrisms ''Value)
 $(makeLenses ''Value)

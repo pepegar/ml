@@ -2,7 +2,6 @@
   # https://devenv.sh/basics/
   packages = [
     pkgs.git
-    pkgs.graphviz
   ];
 
   languages.nix.enable = true;

@@ -62,7 +62,6 @@ library
                    lens,
                    recursion-schemes,
                    monadic-recursion-schemes,
-                   graphviz,
                    fgl,
                    mtl,
                    free,

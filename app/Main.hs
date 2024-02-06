@@ -2,10 +2,12 @@ module Main where
 
 import Data.Tree (drawTree)
 import ML qualified
-import ML.Graph (forwardPass)
+import ML.Graph (toOp, toTree)
 
 main :: IO ()
-main = putStrLn result
+main = do
+  putStrLn result
+  print (ML.eval expr)
   where
     x1 :: ML.Value
     x1 = ML.Value 2 "x1" 0
@@ -21,4 +23,4 @@ main = putStrLn result
     expr :: ML.Value
     expr = tanh (x1 * w1 + x2 * w2 + b)
 
-    result = drawTree (show <$> forwardPass expr)
+    result = drawTree (show <$> toOp expr)
