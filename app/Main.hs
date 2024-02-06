@@ -7,7 +7,18 @@ import ML.Graph (forwardPass)
 main :: IO ()
 main = putStrLn result
   where
-    expr :: Value
-    expr = 4 * 2 - 44 * 323.2 + 2 * 4 * 2 - 44
+    x1 :: Value
+    x1 = Value 2 "x1"
+    w1 :: Value
+    w1 = Value 0 "w1"
+    x2 :: Value
+    x2 = Value (-3.0) "x2"
+    w2 :: Value
+    w2 = Value 1 "w2"
+    b :: Value
+    b = Value 6.7 "b"
 
-    result = drawTree $ fmap show $ forwardPass expr
+    expr :: Value
+    expr = x1 * w1 + x2 * w2 + b
+
+    result = drawTree (show <$> forwardPass expr)
