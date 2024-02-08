@@ -56,7 +56,8 @@ common warnings
 
 library
   exposed-modules: ML,
-                   ML.Graph
+                   ML.Graph,
+                   ML.Backprop
 
   build-depends:   base ^>=4.17.2.1,
                    lens,

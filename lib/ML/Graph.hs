@@ -7,7 +7,7 @@ import Control.Comonad.Cofree (Cofree ((:<)), ComonadCofree (unwrap))
 import Control.Lens (makeLenses)
 import Control.Monad.State.Lazy
 import Data.Functor ((<&>))
-import Data.Functor.Foldable (Base, Corecursive (embed), Recursive (cata, para), hylo)
+import Data.Functor.Foldable (Recursive (cata))
 import Data.Tree (Tree (Node, rootLabel, subForest))
 import GHC.Base (Float)
 import ML qualified
@@ -51,22 +51,22 @@ toOp = cata go
   where
     go :: ML.ValueF (Tree Op) -> Tree Op
     go (ML.ValueF x name grad) = Node {rootLabel = Op name x grad, subForest = []}
-    go (ML.AddF l r grad value) = Node {rootLabel = Op "Add" value grad, subForest = [l, r]}
-    go (ML.SubF l r grad value) = Node {rootLabel = Op "Sub" value grad, subForest = [l, r]}
-    go (ML.MulF l r grad value) = Node {rootLabel = Op "Mul" value grad, subForest = [l, r]}
-    go (ML.DivF l r grad value) = Node {rootLabel = Op "Div" value grad, subForest = [l, r]}
-    go (ML.AbsF x grad value) = Node {rootLabel = Op "Abs" value grad, subForest = [x]}
-    go (ML.NegF x grad value) = Node {rootLabel = Op "Neg" value grad, subForest = [x]}
-    go (ML.ExpF x grad value) = Node {rootLabel = Op "Exp" value grad, subForest = [x]}
-    go (ML.SignumF x grad value) = Node {rootLabel = Op "Signum" value grad, subForest = [x]}
-    go (ML.LogF x grad value) = Node {rootLabel = Op "Log" value grad, subForest = [x]}
-    go (ML.SinF x grad value) = Node {rootLabel = Op "Sin" value grad, subForest = [x]}
-    go (ML.CosF x grad value) = Node {rootLabel = Op "Cos" value grad, subForest = [x]}
-    go (ML.AsinF x grad value) = Node {rootLabel = Op "Asin" value grad, subForest = [x]}
-    go (ML.AcosF x grad value) = Node {rootLabel = Op "Acos" value grad, subForest = [x]}
-    go (ML.AtanF x grad value) = Node {rootLabel = Op "Atan" value grad, subForest = [x]}
-    go (ML.SinhF x grad value) = Node {rootLabel = Op "Sinh" value grad, subForest = [x]}
-    go (ML.CoshF x grad value) = Node {rootLabel = Op "Cosh" value grad, subForest = [x]}
-    go (ML.AsinhF x grad value) = Node {rootLabel = Op "Asinh" value grad, subForest = [x]}
-    go (ML.AcoshF x grad value) = Node {rootLabel = Op "Acosh" value grad, subForest = [x]}
-    go (ML.AtanhF x grad value) = Node {rootLabel = Op "Atanh" value grad, subForest = [x]}
+    go (ML.AddF l r grad value) = Node {rootLabel = Op "+" value grad, subForest = [l, r]}
+    go (ML.SubF l r grad value) = Node {rootLabel = Op "-" value grad, subForest = [l, r]}
+    go (ML.MulF l r grad value) = Node {rootLabel = Op "*" value grad, subForest = [l, r]}
+    go (ML.DivF l r grad value) = Node {rootLabel = Op "/" value grad, subForest = [l, r]}
+    go (ML.AbsF x grad value) = Node {rootLabel = Op "abs" value grad, subForest = [x]}
+    go (ML.NegF x grad value) = Node {rootLabel = Op "neg" value grad, subForest = [x]}
+    go (ML.ExpF x grad value) = Node {rootLabel = Op "exp" value grad, subForest = [x]}
+    go (ML.SignumF x grad value) = Node {rootLabel = Op "signum" value grad, subForest = [x]}
+    go (ML.LogF x grad value) = Node {rootLabel = Op "log" value grad, subForest = [x]}
+    go (ML.SinF x grad value) = Node {rootLabel = Op "sin" value grad, subForest = [x]}
+    go (ML.CosF x grad value) = Node {rootLabel = Op "cos" value grad, subForest = [x]}
+    go (ML.AsinF x grad value) = Node {rootLabel = Op "asin" value grad, subForest = [x]}
+    go (ML.AcosF x grad value) = Node {rootLabel = Op "acos" value grad, subForest = [x]}
+    go (ML.AtanF x grad value) = Node {rootLabel = Op "atan" value grad, subForest = [x]}
+    go (ML.SinhF x grad value) = Node {rootLabel = Op "sinh" value grad, subForest = [x]}
+    go (ML.CoshF x grad value) = Node {rootLabel = Op "cosh" value grad, subForest = [x]}
+    go (ML.AsinhF x grad value) = Node {rootLabel = Op "asinh" value grad, subForest = [x]}
+    go (ML.AcoshF x grad value) = Node {rootLabel = Op "acosh" value grad, subForest = [x]}
+    go (ML.AtanhF x grad value) = Node {rootLabel = Op "atanh" value grad, subForest = [x]}

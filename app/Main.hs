@@ -17,11 +17,12 @@ main = do
     x2 :: ML.Value
     x2 = ML.Value 0 "x2" 0
     w2 :: ML.Value
-    w2 = ML.Value 0 "w2" 0
+    w2 = ML.Value 1 "w2" 0
     b :: ML.Value
-    b = ML.Value 6.88137 "b" 0
+    b = ML.Value 6.8813735870195432 "b" 0
 
     expr :: ML.Value
-    expr = calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
+    -- expr = calculateGradients $ sinh (x1 + w1)
+    expr = calculateGradients $ calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> toOp expr)

@@ -29,7 +29,7 @@ data Value
   | Asinh {_input :: Value, _grad :: Float, _value :: Float}
   | Acosh {_input :: Value, _grad :: Float, _value :: Float}
   | Atanh {_input :: Value, _grad :: Float, _value :: Float}
-  deriving (Eq)
+  deriving (Eq, Show)
 
 $(makePrisms ''Value)
 $(makeLenses ''Value)
