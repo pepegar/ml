@@ -2,7 +2,6 @@ module ML.Backprop where
 
 import Control.Lens
 import Data.Functor.Foldable (Recursive (cata))
-import Debug.Trace (trace)
 import ML qualified
 
 calculateGradients :: ML.Value -> ML.Value

@@ -2,8 +2,6 @@
 
 module ML.Graph where
 
-import Control.Comonad (Comonad (extract))
-import Control.Comonad.Cofree (Cofree ((:<)), ComonadCofree (unwrap))
 import Control.Lens (makeLenses)
 import Control.Monad.State.Lazy
 import Data.Functor ((<&>))

@@ -23,6 +23,6 @@ main = do
 
     expr :: ML.Value
     -- expr = calculateGradients $ sinh (x1 + w1)
-    expr = calculateGradients $ calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
+    expr = calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> toOp expr)
