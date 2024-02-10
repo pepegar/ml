@@ -8,7 +8,7 @@ calculateGradients :: ML.Value -> ML.Value
 calculateGradients = flip (cata go) 1
   where
     go :: ML.ValueF (Float -> ML.Value) -> Float -> ML.Value
-    go (ML.ValueF input name _) = ML.Value input name
+    go (ML.ValueF name _ value) = \n -> ML.Value name n value
     go (ML.AddF l r grad value) = \n -> ML.Add (l n) (r n) (grad + n) value
     go (ML.SubF l r grad value) = \n -> ML.Sub (l n) (r (-n)) (grad + n) value
     go (ML.MulF l r grad value) = \n -> ML.Mul (l (r n ^. ML.value * n)) (r (l n ^. ML.value * n)) (grad + n) value

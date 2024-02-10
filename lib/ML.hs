@@ -9,7 +9,7 @@ import Data.Functor.Foldable (Recursive (cata))
 import Data.Functor.Foldable.TH (makeBaseFunctor)
 
 data Value
-  = Value {_value :: Float, _name :: String, _grad :: Float}
+  = Value {_name :: String, _grad :: Float, _value :: Float}
   | Add {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
   | Sub {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
   | Mul {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
@@ -43,7 +43,7 @@ eval :: Value -> Float
 eval = cata go
   where
     go :: ValueF Float -> Float
-    go (ValueF x _ _) = x
+    go (ValueF _ _ x) = x
     go (AddF x y _ _) = x + y
     go (SubF x y _ _) = x - y
     go (MulF x y _ _) = x * y
@@ -96,16 +96,16 @@ instance Num Value where
   abs x = Abs x 0 $ eval x
   signum x = Signum x 0 $ eval x
   negate x = Neg x 0 $ eval x
-  fromInteger x = Value (fromInteger x) "fromInteger" 1
+  fromInteger x = Value "fromInteger" 1 (fromInteger x)
 
 instance Fractional Value where
   fromRational :: Rational -> Value
-  fromRational x = Value (fromRational x) "fromRational" 0
+  fromRational x = Value "fromRational" 0 (fromRational x)
   (/) :: Value -> Value -> Value
   x / y = Div x y 0 $ eval (x / y)
 
 instance Floating Value where
-  pi = Value pi "pi" 0
+  pi = Value "pi" 0 pi
   exp x = Exp x 0 $ eval $ exp x
   log x = Log x 0 $ eval $ log x
   sin x = Sin x 0 $ eval $ sin x

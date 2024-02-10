@@ -14,7 +14,7 @@ toTree :: ML.Value -> Tree String
 toTree = cata go
   where
     go :: ML.ValueF (Tree String) -> Tree String
-    go (ML.ValueF x name _) = Node {rootLabel = name ++ " " ++ show x, subForest = []}
+    go (ML.ValueF name _ x) = Node {rootLabel = name ++ " " ++ show x, subForest = []}
     go (ML.AddF x y _ _) = Node {rootLabel = "Add", subForest = [x, y]}
     go (ML.SubF x y _ _) = Node {rootLabel = "Sub", subForest = [x, y]}
     go (ML.MulF x y _ _) = Node {rootLabel = "Mul", subForest = [x, y]}
@@ -48,7 +48,7 @@ toOp :: ML.Value -> Tree Op
 toOp = cata go
   where
     go :: ML.ValueF (Tree Op) -> Tree Op
-    go (ML.ValueF x name grad) = Node {rootLabel = Op name x grad, subForest = []}
+    go (ML.ValueF name grad value) = Node {rootLabel = Op name value grad, subForest = []}
     go (ML.AddF l r grad value) = Node {rootLabel = Op "+" value grad, subForest = [l, r]}
     go (ML.SubF l r grad value) = Node {rootLabel = Op "-" value grad, subForest = [l, r]}
     go (ML.MulF l r grad value) = Node {rootLabel = Op "*" value grad, subForest = [l, r]}
