@@ -1,5 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module ML.Graph where
 
 import Control.Lens (makeLenses)

@@ -22,7 +22,7 @@ coshx1w1x2w2b = x1w1x2w2b.cosh()
 coshx1w1x2w2b.retain_grad()
 sinhx1w1x2w2b = x1w1x2w2b.sinh()
 sinhx1w1x2w2b.retain_grad()
-tanhx1w1x2w2b = x1w1x2w2b.tanh()  # sinhx1w1x2w2b / coshx1w1x2w2b
+tanhx1w1x2w2b = sinhx1w1x2w2b / coshx1w1x2w2b
 tanhx1w1x2w2b.retain_grad()
 
 tanhx1w1x2w2b.backward()
@@ -37,6 +37,6 @@ print("x1w1", x1w1.grad.data)
 print("x2w2", x2w2.grad.data)
 print("x1w1x2w2", x1w1x2w2.grad.data)
 print("x1w1x2w2b", x1w1x2w2b.grad.data)
-# print("coshx1w1x2w2b", coshx1w1x2w2b.grad.data)
-# print("sinhx1w1x2w2b", sinhx1w1x2w2b.grad.data)
+print("coshx1w1x2w2b", coshx1w1x2w2b.grad.data)
+print("sinhx1w1x2w2b", sinhx1w1x2w2b.grad.data)
 print("tanhx1w1x2w2b", tanhx1w1x2w2b.grad.data)
