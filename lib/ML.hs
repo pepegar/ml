@@ -102,10 +102,6 @@ _d (Atanh x d) = d
 d :: Lens' (Value a) (Data a)
 d = lens _d updateD
 
--- instance (Show a) => Show (Value a)
-
--- instance (Eq a) => Eq (Value a)
-
 (@=) :: (Floating a) => String -> a -> Value a
 name @= value = ML.Value name (Data 0 value)
 
@@ -248,10 +244,6 @@ instance Corecursive (Value a) where
   embed (AsinhF x d) = Asinh x d
   embed (AcoshF x d) = Acosh x d
   embed (AtanhF x d) = Atanh x d
-
--- deriveEq1 ''ValueF
--- deriveOrd1 ''ValueF
--- deriveShow1 ''ValueF
 
 eval :: (Floating a) => Value a -> a
 eval = cata go
