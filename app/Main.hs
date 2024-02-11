@@ -1,9 +1,10 @@
 module Main where
 
 import Data.Tree (drawTree)
+import ML ((@=))
 import ML qualified
-import ML.Backprop (calculateGradients)
-import ML.Graph (toOp, toTree)
+import ML.Backprop qualified as ML
+import ML.Graph (toOp)
 
 main :: IO ()
 main = do
@@ -11,18 +12,17 @@ main = do
   print (ML.eval expr)
   where
     x1 :: ML.Value
-    x1 = ML.Value "x1" 0 2
+    x1 = "x1" @= 2
     w1 :: ML.Value
-    w1 = ML.Value "w1" 0 (-3)
+    w1 = "w1" @= (-3)
     x2 :: ML.Value
-    x2 = ML.Value "x2" 0 0
+    x2 = "x2" @= 0
     w2 :: ML.Value
-    w2 = ML.Value "w2" 0 1
+    w2 = "w2" @= 1
     b :: ML.Value
-    b = ML.Value "b" 0 6.8813735870195432
+    b = "b" @= 6.8813735870195432
 
     expr :: ML.Value
-    -- expr = calculateGradients $ sinh (x1 + w1)
-    expr = calculateGradients $ tanh (x1 * w1 + x2 * w2 + b)
+    expr = ML.calculateGradients $ ML.forwardPass $ tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> toOp expr)

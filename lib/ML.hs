@@ -3,37 +3,49 @@
 
 module ML where
 
+import Control.Lens (over, set)
 import Control.Lens.TH (makeLenses, makePrisms)
 import Data.Deriving
 import Data.Functor.Foldable (Recursive (cata))
 import Data.Functor.Foldable.TH (makeBaseFunctor)
 
+data Data = Data
+  { _grad :: Float,
+    _value :: Float
+  }
+  deriving (Eq, Show, Ord)
+
+$(makeLenses ''Data)
+
 data Value
-  = Value {_name :: String, _grad :: Float, _value :: Float}
-  | Add {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
-  | Sub {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
-  | Mul {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
-  | Div {_l :: Value, _r :: Value, _grad :: Float, _value :: Float}
-  | Abs {_input :: Value, _grad :: Float, _value :: Float}
-  | Neg {_input :: Value, _grad :: Float, _value :: Float}
-  | Exp {_input :: Value, _grad :: Float, _value :: Float}
-  | Signum {_input :: Value, _grad :: Float, _value :: Float}
-  | Log {_input :: Value, _grad :: Float, _value :: Float}
-  | Sin {_input :: Value, _grad :: Float, _value :: Float}
-  | Cos {_input :: Value, _grad :: Float, _value :: Float}
-  | Asin {_input :: Value, _grad :: Float, _value :: Float}
-  | Acos {_input :: Value, _grad :: Float, _value :: Float}
-  | Atan {_input :: Value, _grad :: Float, _value :: Float}
-  | Sinh {_input :: Value, _grad :: Float, _value :: Float}
-  | Cosh {_input :: Value, _grad :: Float, _value :: Float}
-  | Asinh {_input :: Value, _grad :: Float, _value :: Float}
-  | Acosh {_input :: Value, _grad :: Float, _value :: Float}
-  | Atanh {_input :: Value, _grad :: Float, _value :: Float}
+  = Value {_name :: String, _d :: Data}
+  | Add {_l :: Value, _r :: Value, _d :: Data}
+  | Sub {_l :: Value, _r :: Value, _d :: Data}
+  | Mul {_l :: Value, _r :: Value, _d :: Data}
+  | Div {_l :: Value, _r :: Value, _d :: Data}
+  | Abs {_input :: Value, _d :: Data}
+  | Neg {_input :: Value, _d :: Data}
+  | Exp {_input :: Value, _d :: Data}
+  | Signum {_input :: Value, _d :: Data}
+  | Log {_input :: Value, _d :: Data}
+  | Sin {_input :: Value, _d :: Data}
+  | Cos {_input :: Value, _d :: Data}
+  | Asin {_input :: Value, _d :: Data}
+  | Acos {_input :: Value, _d :: Data}
+  | Atan {_input :: Value, _d :: Data}
+  | Sinh {_input :: Value, _d :: Data}
+  | Cosh {_input :: Value, _d :: Data}
+  | Asinh {_input :: Value, _d :: Data}
+  | Acosh {_input :: Value, _d :: Data}
+  | Atanh {_input :: Value, _d :: Data}
   deriving (Eq, Show)
+
+(@=) :: String -> Float -> Value
+name @= value = ML.Value name (ML.Data 0 value)
 
 $(makePrisms ''Value)
 $(makeLenses ''Value)
-makeBaseFunctor ''Value
+$(makeBaseFunctor ''Value)
 
 deriveEq1 ''ValueF
 deriveOrd1 ''ValueF
@@ -43,78 +55,78 @@ eval :: Value -> Float
 eval = cata go
   where
     go :: ValueF Float -> Float
-    go (ValueF _ _ x) = x
-    go (AddF x y _ _) = x + y
-    go (SubF x y _ _) = x - y
-    go (MulF x y _ _) = x * y
-    go (DivF x y _ _) = x / y
-    go (AbsF x _ _) = abs x
-    go (NegF x _ _) = negate x
-    go (ExpF x _ _) = exp x
-    go (SignumF x _ _) = signum x
-    go (LogF x _ _) = log x
-    go (SinF x _ _) = sin x
-    go (CosF x _ _) = cos x
-    go (AsinF x _ _) = asin x
-    go (AcosF x _ _) = acos x
-    go (AtanF x _ _) = atan x
-    go (SinhF x _ _) = sinh x
-    go (CoshF x _ _) = cosh x
-    go (AsinhF x _ _) = asinh x
-    go (AcoshF x _ _) = acosh x
-    go (AtanhF x _ _) = atanh x
+    go (ValueF _ (Data _ value)) = value
+    go (AddF x y _) = x + y
+    go (SubF x y _) = x - y
+    go (MulF x y _) = x * y
+    go (DivF x y _) = x / y
+    go (AbsF x _) = abs x
+    go (NegF x _) = negate x
+    go (ExpF x _) = exp x
+    go (SignumF x _) = signum x
+    go (LogF x _) = log x
+    go (SinF x _) = sin x
+    go (CosF x _) = cos x
+    go (AsinF x _) = asin x
+    go (AcosF x _) = acos x
+    go (AtanF x _) = atan x
+    go (SinhF x _) = sinh x
+    go (CoshF x _) = cosh x
+    go (AsinhF x _) = asinh x
+    go (AcoshF x _) = acosh x
+    go (AtanhF x _) = atanh x
 
 forwardPass :: Value -> Value
 forwardPass = cata go
   where
     go :: ValueF Value -> Value
-    go (ValueF value name grad) = Value value name grad
-    go (AddF x y grad value) = Add x y grad $ eval (x + y)
-    go (SubF x y grad value) = Sub x y grad $ eval (x - y)
-    go (MulF x y grad value) = Mul x y grad $ eval (x * y)
-    go (DivF x y grad value) = Div x y grad $ eval (x / y)
-    go (AbsF x grad value) = Abs x grad $ eval (abs x)
-    go (NegF x grad value) = Neg x grad $ eval (negate x)
-    go (ExpF x grad value) = Exp x grad $ eval (exp x)
-    go (SignumF x grad value) = Signum x grad $ eval (signum x)
-    go (LogF x grad value) = Log x grad $ eval (log x)
-    go (SinF x grad value) = Sin x grad $ eval (sin x)
-    go (CosF x grad value) = Cos x grad $ eval (cos x)
-    go (AsinF x grad value) = Asin x grad $ eval (asin x)
-    go (AcosF x grad value) = Acos x grad $ eval (acos x)
-    go (AtanF x grad value) = Atan x grad $ eval (atan x)
-    go (SinhF x grad value) = Sinh x grad $ eval (sinh x)
-    go (CoshF x grad value) = Cosh x grad $ eval (cosh x)
-    go (AsinhF x grad value) = Asinh x grad $ eval (asinh x)
-    go (AcoshF x grad value) = Acosh x grad $ eval (acosh x)
-    go (AtanhF x grad value) = Atanh x grad $ eval (atanh x)
+    go (ValueF name d) = Value name d
+    go (AddF x y d) = Add x y $ set value (eval (x + y)) d
+    go (SubF x y d) = Sub x y $ set value (eval (x - y)) d
+    go (MulF x y d) = Mul x y $ set value (eval (x * y)) d
+    go (DivF x y d) = Div x y $ set value (eval (x / y)) d
+    go (AbsF x d) = Abs x $ set value (eval (abs x)) d
+    go (NegF x d) = Neg x $ set value (eval (negate x)) d
+    go (ExpF x d) = Exp x $ set value (eval (exp x)) d
+    go (SignumF x d) = Signum x $ set value (eval (signum x)) d
+    go (LogF x d) = Log x $ set value (eval (log x)) d
+    go (SinF x d) = Sin x $ set value (eval (sin x)) d
+    go (CosF x d) = Cos x $ set value (eval (cos x)) d
+    go (AsinF x d) = Asin x $ set value (eval (asin x)) d
+    go (AcosF x d) = Acos x $ set value (eval (acos x)) d
+    go (AtanF x d) = Atan x $ set value (eval (atan x)) d
+    go (SinhF x d) = Sinh x $ set value (eval (sinh x)) d
+    go (CoshF x d) = Cosh x $ set value (eval (cosh x)) d
+    go (AsinhF x d) = Asinh x $ set value (eval (asinh x)) d
+    go (AcoshF x d) = Acosh x $ set value (eval (acosh x)) d
+    go (AtanhF x d) = Atanh x $ set value (eval (atanh x)) d
 
 instance Num Value where
-  x + y = Add x y 0 $ eval (x + y)
-  x * y = Mul x y 0 $ eval (x * y)
-  x - y = Sub x y 0 $ eval (x - y)
-  abs x = Abs x 0 $ eval x
-  signum x = Signum x 0 $ eval x
-  negate x = Neg x 0 $ eval x
-  fromInteger x = Value "fromInteger" 1 (fromInteger x)
+  x + y = Add x y (Data 0 0)
+  x * y = Mul x y (Data 0 0)
+  x - y = Sub x y (Data 0 0)
+  abs x = Abs x (Data 0 0)
+  signum x = Signum x (Data 0 0)
+  negate x = Neg x (Data 0 0)
+  fromInteger x = Value "fromInteger" (Data 0 0)
 
 instance Fractional Value where
   fromRational :: Rational -> Value
-  fromRational x = Value "fromRational" 0 (fromRational x)
+  fromRational x = Value "fromRational" (Data 0 (fromRational x))
   (/) :: Value -> Value -> Value
-  x / y = Div x y 0 $ eval (x / y)
+  x / y = Div x y (Data 0 0)
 
 instance Floating Value where
-  pi = Value "pi" 0 pi
-  exp x = Exp x 0 $ eval $ exp x
-  log x = Log x 0 $ eval $ log x
-  sin x = Sin x 0 $ eval $ sin x
-  cos x = Cos x 0 $ eval $ cos x
-  asin x = Asin x 0 $ eval $ asin x
-  acos x = Acos x 0 $ eval $ acos x
-  atan x = Atan x 0 $ eval $ atan x
-  sinh x = Sinh x 0 $ eval $ sinh x
-  cosh x = Cosh x 0 $ eval $ cosh x
-  asinh x = Asinh x 0 $ eval $ asinh x
-  acosh x = Acosh x 0 $ eval $ acosh x
-  atanh x = Atanh x 0 $ eval $ atanh x
+  pi = Value "pi" (Data 0 pi)
+  exp x = Exp x (Data 0 0)
+  log x = Log x (Data 0 0)
+  sin x = Sin x (Data 0 0)
+  cos x = Cos x (Data 0 0)
+  asin x = Asin x (Data 0 0)
+  acos x = Acos x (Data 0 0)
+  atan x = Atan x (Data 0 0)
+  sinh x = Sinh x (Data 0 0)
+  cosh x = Cosh x (Data 0 0)
+  asinh x = Asinh x (Data 0 0)
+  acosh x = Acosh x (Data 0 0)
+  atanh x = Atanh x (Data 0 0)
