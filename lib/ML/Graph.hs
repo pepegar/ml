@@ -4,16 +4,17 @@ module ML.Graph where
 
 import Control.Lens (makeLenses)
 import Control.Monad.State.Lazy
+import Data.Deriving (deriveEq1, deriveOrd1, deriveShow1)
 import Data.Functor ((<&>))
 import Data.Functor.Foldable (Recursive (cata))
 import Data.Tree (Tree (Node, rootLabel, subForest))
 import GHC.Base (Float)
 import ML qualified
 
-toTree :: ML.Value -> Tree String
+toTree :: (Show a) => ML.Value a -> Tree String
 toTree = cata go
   where
-    go :: ML.ValueF (Tree String) -> Tree String
+    go :: (Show a) => ML.ValueF a (Tree String) -> Tree String
     go (ML.ValueF name (ML.Data _ x)) = Node {rootLabel = name ++ " " ++ show x, subForest = []}
     go (ML.AddF x y _) = Node {rootLabel = "Add", subForest = [x, y]}
     go (ML.SubF x y _) = Node {rootLabel = "Sub", subForest = [x, y]}
@@ -35,18 +36,23 @@ toTree = cata go
     go (ML.AcoshF x _) = Node {rootLabel = "Acosh", subForest = [x]}
     go (ML.AtanhF x _) = Node {rootLabel = "Atanh", subForest = [x]}
 
-data Op = Op
+data Op a = Op
   { _op :: String,
-    _v :: ML.Data
+    _v :: ML.Data a
   }
-  deriving (Show, Eq)
 
 makeLenses ''Op
 
-toOp :: ML.Value -> Tree Op
+deriving instance (Eq a) => Eq (Op a)
+
+deriving instance (Ord a) => Ord (Op a)
+
+deriving instance (Show a) => Show (Op a)
+
+toOp :: ML.Value a -> Tree (Op a)
 toOp = cata go
   where
-    go :: ML.ValueF (Tree Op) -> Tree Op
+    go :: ML.ValueF a (Tree (Op a)) -> Tree (Op a)
     go (ML.ValueF name (ML.Data grad value)) = Node {rootLabel = Op name (ML.Data grad value), subForest = []}
     go (ML.AddF l r (ML.Data grad value)) = Node {rootLabel = Op "+" (ML.Data grad value), subForest = [l, r]}
     go (ML.SubF l r (ML.Data grad value)) = Node {rootLabel = Op "-" (ML.Data grad value), subForest = [l, r]}

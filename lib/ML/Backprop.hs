@@ -5,10 +5,10 @@ import Data.Functor.Foldable (Recursive (cata))
 import ML (d, value)
 import ML qualified
 
-calculateGradients :: ML.Value -> ML.Value
+calculateGradients :: (Floating a) => ML.Value a -> ML.Value a
 calculateGradients = flip (cata go) 1
   where
-    go :: ML.ValueF (Float -> ML.Value) -> Float -> ML.Value
+    go :: (Floating a) => ML.ValueF a (a -> ML.Value a) -> a -> ML.Value a
     go (ML.ValueF name (ML.Data _ val)) = \n -> ML.Value name (ML.Data n val)
     go (ML.AddF l r (ML.Data grad val)) = \n -> ML.Add (l n) (r n) (ML.Data (grad + n) val)
     go (ML.SubF l r (ML.Data grad val)) = \n -> ML.Sub (l n) (r (-n)) (ML.Data (grad + n) val)
@@ -30,10 +30,10 @@ calculateGradients = flip (cata go) 1
     go (ML.AcoshF input (ML.Data grad val)) = \n -> ML.Acosh (input n) (ML.Data (grad + n) val)
     go (ML.AtanhF input (ML.Data grad val)) = \n -> ML.Atanh (input n) (ML.Data (grad + n) val)
 
-zeroGrad :: ML.Value -> ML.Value
+zeroGrad :: (Floating a) => ML.Value a -> ML.Value a
 zeroGrad = cata go
   where
-    go :: ML.ValueF ML.Value -> ML.Value
+    go :: (Floating a) => ML.ValueF a (ML.Value a) -> ML.Value a
     go (ML.ValueF name (ML.Data grad value)) = ML.Value name (ML.Data 0 value)
     go (ML.AddF x y (ML.Data grad value)) = ML.Add x y (ML.Data 0 value)
     go (ML.SubF x y (ML.Data grad value)) = ML.Sub x y (ML.Data 0 value)
