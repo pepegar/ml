@@ -57,7 +57,8 @@ common warnings
 library
   exposed-modules: ML,
                    ML.Graph,
-                   ML.Backprop
+                   ML.Backprop,
+                   ML.NN
 
   build-depends:   base ^>=4.17.2.1,
                    lens,
@@ -70,6 +71,7 @@ library
                    containers,
                    deriving-compat,
                    tensors,
+                   random,
   hs-source-dirs: lib/
   default-language: GHC2021
   default-extensions: OverloadedStrings, TemplateHaskell, GADTs, TypeFamilies, DataKinds, OverloadedLists
@@ -91,7 +93,8 @@ executable ml
   build-depends:   base ^>=4.17.2.1,
                     ml,
                     containers,
-                    tensors
+                    tensors,
+                    lens,
 
   -- Directories containing source files.
   hs-source-dirs:   app

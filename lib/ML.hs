@@ -13,7 +13,9 @@ deriving instance (Eq a) => Eq (Data a)
 
 deriving instance (Ord a) => Ord (Data a)
 
-deriving instance (Show a) => Show (Data a)
+instance (Show a) => Show (Data a) where
+  show :: (Show a) => Data a -> String
+  show (Data grad value) = "Data { _grad = " ++ show grad ++ ", _value = " ++ show value ++ "}"
 
 _value :: Data a -> a
 _value (Data _ v) = v
@@ -102,8 +104,14 @@ _d (Atanh x d) = d
 d :: Lens' (Value a) (Data a)
 d = lens _d updateD
 
+anonValue :: (Floating a) => a -> Value a
+anonValue value = ML.Value "" (Data 0 value)
+
+mkValue :: (Floating a) => String -> a -> Value a
+mkValue name value = ML.Value name (Data 0 value)
+
 (@=) :: (Floating a) => String -> a -> Value a
-name @= value = ML.Value name (Data 0 value)
+name @= value = mkValue name value
 
 $(makePrisms ''Value)
 $(makeLenses ''Value)
