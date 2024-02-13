@@ -10,14 +10,16 @@ backprop = flip (cata go) 1
   where
     go (ML.ValueF (ML.Data _ val)) = \n -> ML.Value (ML.Data n val)
     go (ML.AddF l r (ML.Data grad val)) = \n -> ML.Add (l n) (r n) (ML.Data (grad + n) val)
-    go (ML.MulF l r (ML.Data grad val)) = \n -> ML.Mul (l (r n ^. d . value * n)) (r (l n ^. d . value * n)) (ML.Data (grad + n) val)
-    go (ML.AbsF input (ML.Data grad val)) = \n -> ML.Abs (input n) (ML.Data (grad + n) val)
-    go (ML.NegF input (ML.Data grad val)) = \n -> ML.Neg (input n) (ML.Data (grad + n) val)
-    go (ML.ExpF input (ML.Data grad val)) = \n -> ML.Exp (input n) (ML.Data (grad + n) val)
+    go (ML.MulF l r (ML.Data grad val)) = \n -> ML.Mul (l (get r * n)) (r (get l * n)) (ML.Data (grad + n) val)
+    go (ML.AbsF input (ML.Data grad val)) = \n -> ML.Abs (input (get input / negate (get input))) (ML.Data (grad + n) val)
+    go (ML.NegF input (ML.Data grad val)) = \n -> ML.Neg (input (fromInteger (-1))) (ML.Data (grad + n) val)
+    go (ML.ExpF input (ML.Data grad val)) = \n -> ML.Exp (input (exp (get input))) (ML.Data (grad + n) val)
     go (ML.SignumF input (ML.Data grad val)) = \n -> ML.Signum (input n) (ML.Data (grad + n) val)
-    go (ML.LogF input (ML.Data grad val)) = \n -> ML.Log (input n) (ML.Data (grad + n) val)
-    go (ML.SinF input (ML.Data grad val)) = \n -> ML.Sin (input n) (ML.Data (grad + n) val)
-    go (ML.AsinF input (ML.Data grad val)) = \n -> ML.Asin (input n) (ML.Data (grad + n) val)
+    go (ML.LogF input (ML.Data grad val)) = \n -> ML.Log (input (1 / get input)) (ML.Data (grad + n) val)
+    go (ML.SinF input (ML.Data grad val)) = \n -> ML.Sin (input (cos $ get input)) (ML.Data (grad + n) val)
+    go (ML.AsinF input (ML.Data grad val)) = \n -> ML.Asin (input (1 / sqrt (1 - get input ** 2))) (ML.Data (grad + n) val)
+
+    get input = input 0 ^. d . value
 
 zeroGrad :: (Floating a) => ML.Value a -> ML.Value a
 zeroGrad = cata go
