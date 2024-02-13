@@ -9,25 +9,6 @@ import Data.Tree (Tree (Node, rootLabel, subForest))
 import GHC.Base (Float)
 import ML qualified
 
-toTree :: (Show a) => ML.Value a -> Tree String
-toTree = cata go
-  where
-    go :: (Show a) => ML.ValueF a (Tree String) -> Tree String
-    go (ML.ValueF (ML.Data _ x)) = Node {rootLabel = show x, subForest = []}
-    go (ML.AddF x y _) = Node {rootLabel = "Add", subForest = [x, y]}
-    go (ML.SubF x y _) = Node {rootLabel = "Sub", subForest = [x, y]}
-    go (ML.MulF x y _) = Node {rootLabel = "Mul", subForest = [x, y]}
-    go (ML.DivF x y _) = Node {rootLabel = "Div", subForest = [x, y]}
-    go (ML.AbsF x _) = Node {rootLabel = "Abs", subForest = [x]}
-    go (ML.NegF x _) = Node {rootLabel = "Neg", subForest = [x]}
-    go (ML.ExpF x _) = Node {rootLabel = "Exp", subForest = [x]}
-    go (ML.SignumF x _) = Node {rootLabel = "Signum", subForest = [x]}
-    go (ML.LogF x _) = Node {rootLabel = "Log", subForest = [x]}
-    go (ML.SinF x _) = Node {rootLabel = "Sin", subForest = [x]}
-    go (ML.AsinF x _) = Node {rootLabel = "Asin", subForest = [x]}
-    go (ML.AcosF x _) = Node {rootLabel = "Acos", subForest = [x]}
-    go (ML.AtanF x _) = Node {rootLabel = "Atan", subForest = [x]}
-
 data Op a = Op
   { _op :: String,
     _v :: ML.Data a

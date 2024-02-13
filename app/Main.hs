@@ -26,18 +26,18 @@ main = do
   putStrLn result
   print (ML.eval expr)
   where
-    x1 :: ML.Value (T.Tensor '[1] Float)
+    x1 :: ML.Value Double
     x1 = 2
-    w1 :: ML.Value (T.Tensor '[1] Float)
+    w1 :: ML.Value Double
     w1 = -3
-    x2 :: ML.Value (T.Tensor '[1] Float)
+    x2 :: ML.Value Double
     x2 = 0
-    w2 :: ML.Value (T.Tensor '[1] Float)
+    w2 :: ML.Value Double
     w2 = 1
-    b :: ML.Value (T.Tensor '[1] Float)
+    b :: ML.Value Double
     b = 6.8813735870195432
 
-    expr :: ML.Value (T.Tensor '[1] Float)
+    expr :: ML.Value Double
     expr = ML.calculateGradients $ ML.forwardPass $ tanh (x1 * w1 + x2 * w2 + b)
 
     result = drawTree (show <$> toOp expr)

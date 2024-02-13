@@ -18,23 +18,17 @@ instance (Show a) => Show (Data a) where
   show :: (Show a) => Data a -> String
   show (Data grad value) = "Data { _grad = " ++ show grad ++ ", _value = " ++ show value ++ "}"
 
-_value :: Data a -> a
-_value (Data _ v) = v
-
-_grad :: Data a -> a
-_grad (Data g _) = g
-
-updateA :: Data a -> a -> Data a
-updateA (Data g _) = Data g
-
-updateG :: Data a -> a -> Data a
-updateG (Data _ a) g = Data g a
-
 value :: Lens' (Data a) a
 value = lens _value updateA
+  where
+    _value (Data _ v) = v
+    updateA (Data g _) = Data g
 
 grad :: Lens' (Data a) a
 grad = lens _grad updateG
+  where
+    _grad (Data g _) = g
+    updateG (Data _ a) g = Data g a
 
 data Value a where
   Value :: (Floating a) => Data a -> Value a
@@ -52,40 +46,40 @@ data Value a where
   Acos :: Value a -> Data a -> Value a
   Atan :: Value a -> Data a -> Value a
 
-updateD :: Value a -> Data a -> Value a
-updateD (Value _) d = Value d
-updateD (Add x y _) d = Add x y d
-updateD (Sub x y _) d = Sub x y d
-updateD (Mul x y _) d = Mul x y d
-updateD (Div x y _) d = Div x y d
-updateD (Abs x _) d = Abs x d
-updateD (Neg x _) d = Neg x d
-updateD (Exp x _) d = Exp x d
-updateD (Signum x _) d = Signum x d
-updateD (Log x _) d = Log x d
-updateD (Sin x _) d = Sin x d
-updateD (Asin x _) d = Asin x d
-updateD (Acos x _) d = Acos x d
-updateD (Atan x _) d = Atan x d
-
-_d :: Value a -> Data a
-_d (Value d) = d
-_d (Add x y d) = d
-_d (Sub x y d) = d
-_d (Mul x y d) = d
-_d (Div x y d) = d
-_d (Abs x d) = d
-_d (Neg x d) = d
-_d (Exp x d) = d
-_d (Signum x d) = d
-_d (Log x d) = d
-_d (Sin x d) = d
-_d (Asin x d) = d
-_d (Acos x d) = d
-_d (Atan x d) = d
-
 d :: Lens' (Value a) (Data a)
 d = lens _d updateD
+  where
+    updateD :: Value a -> Data a -> Value a
+    updateD (Value _) d = Value d
+    updateD (Add x y _) d = Add x y d
+    updateD (Sub x y _) d = Sub x y d
+    updateD (Mul x y _) d = Mul x y d
+    updateD (Div x y _) d = Div x y d
+    updateD (Abs x _) d = Abs x d
+    updateD (Neg x _) d = Neg x d
+    updateD (Exp x _) d = Exp x d
+    updateD (Signum x _) d = Signum x d
+    updateD (Log x _) d = Log x d
+    updateD (Sin x _) d = Sin x d
+    updateD (Asin x _) d = Asin x d
+    updateD (Acos x _) d = Acos x d
+    updateD (Atan x _) d = Atan x d
+
+    _d :: Value a -> Data a
+    _d (Value d) = d
+    _d (Add x y d) = d
+    _d (Sub x y d) = d
+    _d (Mul x y d) = d
+    _d (Div x y d) = d
+    _d (Abs x d) = d
+    _d (Neg x d) = d
+    _d (Exp x d) = d
+    _d (Signum x d) = d
+    _d (Log x d) = d
+    _d (Sin x d) = d
+    _d (Asin x d) = d
+    _d (Acos x d) = d
+    _d (Atan x d) = d
 
 mkValue :: (Floating a) => a -> Value a
 mkValue value = ML.Value (Data 0 value)
@@ -110,7 +104,6 @@ data ValueF a b where
   AtanF :: b -> Data a -> ValueF a b
 
 instance Functor (ValueF a) where
-  fmap :: (a2 -> b) -> ValueF a a2 -> ValueF a b
   fmap f (ValueF d) = ValueF d
   fmap f (AddF x y d) = AddF (f x) (f y) d
   fmap f (SubF x y d) = SubF (f x) (f y) d
@@ -215,7 +208,6 @@ eval = cata go
 forwardPass :: (Floating a) => Value a -> Value a
 forwardPass = cata go
   where
-    go :: (Floating a) => ValueF a (Value a) -> Value a
     go (ValueF d) = Value d
     go (AddF x y d) = Add x y $ set value (eval (x + y)) d
     go (SubF x y d) = Sub x y $ set value (eval (x - y)) d

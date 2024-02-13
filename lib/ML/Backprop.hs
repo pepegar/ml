@@ -8,7 +8,6 @@ import ML qualified
 calculateGradients :: (Floating a) => ML.Value a -> ML.Value a
 calculateGradients = flip (cata go) 1
   where
-    go :: (Floating a) => ML.ValueF a (a -> ML.Value a) -> a -> ML.Value a
     go (ML.ValueF (ML.Data _ val)) = \n -> ML.Value (ML.Data n val)
     go (ML.AddF l r (ML.Data grad val)) = \n -> ML.Add (l n) (r n) (ML.Data (grad + n) val)
     go (ML.SubF l r (ML.Data grad val)) = \n -> ML.Sub (l n) (r (-n)) (ML.Data (grad + n) val)
@@ -27,7 +26,6 @@ calculateGradients = flip (cata go) 1
 zeroGrad :: (Floating a) => ML.Value a -> ML.Value a
 zeroGrad = cata go
   where
-    go :: (Floating a) => ML.ValueF a (ML.Value a) -> ML.Value a
     go (ML.ValueF (ML.Data grad value)) = ML.Value (ML.Data 0 value)
     go (ML.AddF x y (ML.Data grad value)) = ML.Add x y (ML.Data 0 value)
     go (ML.SubF x y (ML.Data grad value)) = ML.Sub x y (ML.Data 0 value)
