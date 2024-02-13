@@ -1,8 +1,10 @@
 module ML.NN where
 
-import Control.Lens (Lens', lens, (^.))
+import Control.Lens (Each (each), Lens', lens, over, (^.))
 import Control.Monad (replicateM)
+import ML (d)
 import ML qualified
+import ML.Backprop qualified as ML
 import System.Random (Random, randomRIO, uniform)
 
 data Neuron a where
@@ -45,6 +47,12 @@ forwardPass xs neuron =
 data Layer a where
   Layer :: (Floating a) => [Neuron a] -> Layer a
 
+neurons :: (Floating a) => Lens' (Layer a) [Neuron a]
+neurons = lens _neurons updateNeurons
+  where
+    _neurons (Layer neurons) = neurons
+    updateNeurons (Layer _) = Layer
+
 mkLayer :: (Random a, Floating a) => Int -> Int -> IO (Layer a)
 mkLayer nin nout = do
   neurons <- replicateM nout $ mkNeuron nin
@@ -55,6 +63,12 @@ forwardPassL xs (Layer neurons) = forwardPass xs <$> neurons
 
 data MLP a where
   MLP :: (Floating a) => [Layer a] -> MLP a
+
+layers :: (Floating a) => Lens' (MLP a) [Layer a]
+layers = lens _layers updateLayers
+  where
+    _layers (MLP layers) = layers
+    updateLayers (MLP _) = MLP
 
 windowed :: Int -> [a] -> [[a]]
 windowed size ls =
@@ -76,3 +90,30 @@ mkMLP sizes = do
 
 forwardPassMLP :: (Floating a) => [ML.Value a] -> MLP a -> [ML.Value a]
 forwardPassMLP xs (MLP layers) = foldl forwardPassL xs layers
+
+zeroGradMLP :: (Floating a) => MLP a -> MLP a
+zeroGradMLP mlp = update
+  where
+    optic = layers . each . neurons . each . weights . each
+    update = over optic ML.zeroGrad mlp
+
+nudge :: (Floating a) => a -> MLP a -> MLP a
+nudge step mlp = update
+  where
+    optic = layers . each . neurons . each . weights . each . d
+    updateData (ML.Data grad value) = ML.Data grad (value * grad * step)
+    update = over optic updateData mlp
+
+aaaa :: (Floating a) => MLP a -> [ML.Value a] -> MLP a
+aaaa mlp xs = newMlp
+  where
+    reverselayers = reverse $ mlp ^. layers
+
+    processLayer :: Layer a -> Layer a
+    processLayer = id
+
+    calcErrorForNeuron :: Neuron a -> Neuron a
+    calcErrorForNeuron = id
+
+    newLayers = reverse $ processLayer <$> reverselayers
+    newMlp = mlp

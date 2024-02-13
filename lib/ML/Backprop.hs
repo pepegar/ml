@@ -5,8 +5,8 @@ import Data.Functor.Foldable (Recursive (cata))
 import ML (d, value)
 import ML qualified
 
-calculateGradients :: (Floating a) => ML.Value a -> ML.Value a
-calculateGradients = flip (cata go) 1
+backprop :: (Floating a) => ML.Value a -> ML.Value a
+backprop = flip (cata go) 1
   where
     go (ML.ValueF (ML.Data _ val)) = \n -> ML.Value (ML.Data n val)
     go (ML.AddF l r (ML.Data grad val)) = \n -> ML.Add (l n) (r n) (ML.Data (grad + n) val)
