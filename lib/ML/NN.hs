@@ -12,8 +12,8 @@ mkNeuron :: (Random a, Floating a) => Int -> IO (Neuron a)
 mkNeuron nin = do
   let lb = -1
   let ub = 1
-  bias <- ML.mkValue "bias" <$> randomRIO (lb, ub)
-  weights <- replicateM nin (ML.mkValue "w" <$> randomRIO (lb, ub))
+  bias <- ML.mkValue <$> randomRIO (lb, ub)
+  weights <- replicateM nin (ML.mkValue <$> randomRIO (lb, ub))
   pure $ Neuron weights bias
 
 _weights :: Neuron a -> [ML.Value a]
