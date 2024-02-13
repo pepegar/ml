@@ -27,9 +27,7 @@ toOp = cata go
   where
     go (ML.ValueF (ML.Data grad value)) = Node {rootLabel = Op (show value) (ML.Data grad value), subForest = []}
     go (ML.AddF l r (ML.Data grad value)) = Node {rootLabel = Op "+" (ML.Data grad value), subForest = [l, r]}
-    go (ML.SubF l r (ML.Data grad value)) = Node {rootLabel = Op "-" (ML.Data grad value), subForest = [l, r]}
     go (ML.MulF l r (ML.Data grad value)) = Node {rootLabel = Op "*" (ML.Data grad value), subForest = [l, r]}
-    go (ML.DivF l r (ML.Data grad value)) = Node {rootLabel = Op "/" (ML.Data grad value), subForest = [l, r]}
     go (ML.AbsF x (ML.Data grad value)) = Node {rootLabel = Op "abs" (ML.Data grad value), subForest = [x]}
     go (ML.NegF x (ML.Data grad value)) = Node {rootLabel = Op "neg" (ML.Data grad value), subForest = [x]}
     go (ML.ExpF x (ML.Data grad value)) = Node {rootLabel = Op "exp" (ML.Data grad value), subForest = [x]}
@@ -37,5 +35,3 @@ toOp = cata go
     go (ML.LogF x (ML.Data grad value)) = Node {rootLabel = Op "log" (ML.Data grad value), subForest = [x]}
     go (ML.SinF x (ML.Data grad value)) = Node {rootLabel = Op "sin" (ML.Data grad value), subForest = [x]}
     go (ML.AsinF x (ML.Data grad value)) = Node {rootLabel = Op "asin" (ML.Data grad value), subForest = [x]}
-    go (ML.AcosF x (ML.Data grad value)) = Node {rootLabel = Op "acos" (ML.Data grad value), subForest = [x]}
-    go (ML.AtanF x (ML.Data grad value)) = Node {rootLabel = Op "atan" (ML.Data grad value), subForest = [x]}
